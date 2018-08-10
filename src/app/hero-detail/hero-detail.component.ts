@@ -11,8 +11,8 @@ import { HeroService } from '../hero.service';
   styleUrls: ['./hero-detail.component.css']
 })
 export class HeroDetailComponent implements OnInit {
-  @Input() hero: Hero;
-    
+  @Input() hero: Hero;  
+
   constructor(
     private route: ActivatedRoute,
     private heroService: HeroService,
@@ -26,7 +26,7 @@ export class HeroDetailComponent implements OnInit {
   getHero(): void {
     const id = +this.route.snapshot.paramMap.get('id');
     this.heroService.getHero(id)
-      .subscribe(hero => this.hero = hero);
+      .subscribe(data => {this.hero = data[0]});
   }
 
   goBack(): void {
@@ -35,6 +35,14 @@ export class HeroDetailComponent implements OnInit {
 
   save(): void {
     this.heroService.updateHero(this.hero)
-      .subscribe(() => this.goBack());
+      .subscribe(
+        data => {
+          this.getHero();           
+          this.goBack();
+        },
+        error => {
+          console.error("Error saving!");
+        }
+      );
   }
 }
